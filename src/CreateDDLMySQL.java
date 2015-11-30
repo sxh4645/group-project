@@ -5,24 +5,25 @@ import javax.swing.event.*;
 import java.io.*;
 import java.util.*;
 
-public class CreateDDLMySQL extends EdgeConvertCreateDDL {
+public class CreateDDLMySQL extends FileParserOutput {
 
-   protected String databaseName;
+	public static final String PRODUCT 	= "MySQL";
+	public static final String DEFAULT 	= "MySQLDB";	
+   
    //this array is for determining how MySQL refers to datatypes
    protected String[] strDataType = {"VARCHAR", "BOOL", "INT", "DOUBLE"};
-   protected StringBuffer sb;
 
-   public CreateDDLMySQL(EdgeTable[] inputTables, EdgeField[] inputFields) {
+   public CreateDDLMySQL(DatabaseTable[] inputTables, DatabaseField[] inputFields) {
       super(inputTables, inputFields);
       sb = new StringBuffer();
-   } //CreateDDLMySQL(EdgeTable[], EdgeField[])
+   } //CreateDDLMySQL
    
    public CreateDDLMySQL() { //default constructor with empty arg list for to allow output dir to be set before there are table and field objects
       
    }
    
    public void createDDL() {
-      EdgeConvertGUI.setReadSuccess(true);
+      DatabaseConvertGUI.setReadSuccess(true);
       databaseName = generateDatabaseName();
       sb.append("CREATE DATABASE " + databaseName + ";\r\n");
       sb.append("USE " + databaseName + ";\r\n");
@@ -36,7 +37,7 @@ public class CreateDDLMySQL extends EdgeConvertCreateDDL {
                int numPrimaryKey = 0;
                int numForeignKey = 0;
                for (int nativeFieldCount = 0; nativeFieldCount < nativeFields.length; nativeFieldCount++) { //print out the fields
-                  EdgeField currentField = getField(nativeFields[nativeFieldCount]);
+            	   DatabaseField currentField = getField(nativeFields[nativeFieldCount]);
                   sb.append("\t" + currentField.getName() + " " + strDataType[currentField.getDataType()]);
                   if (currentField.getDataType() == 0) { //varchar
                      sb.append("(" + currentField.getVarcharValue() + ")"); //append varchar length in () if data type is varchar
@@ -122,7 +123,7 @@ public class CreateDDLMySQL extends EdgeConvertCreateDDL {
                        null,
                        dbNameDefault);
          if (databaseName == null) {
-            EdgeConvertGUI.setReadSuccess(false);
+            DatabaseConvertGUI.setReadSuccess(false);
             return "";
          }
          if (databaseName.equals("")) {
