@@ -1090,6 +1090,14 @@ public class DatabaseConvertGUI {
       }
    }
    
+   private String getFileExtension(File file) {
+	    String name = file.getName();
+	    try {
+	        return name.substring(name.lastIndexOf(".") + 1);
+	    } catch (Exception e) {
+	        return "";
+	    }
+	}
    class EdgeRadioButtonListener implements ActionListener {
       public void actionPerformed(ActionEvent ae) {
          for (int i = 0; i < jrbDataType.length; i++) {
@@ -1181,15 +1189,28 @@ public class DatabaseConvertGUI {
                /*
                 * WE NEED TO CHANGE THIS - TODO WORK
                 */
-               ecfp = new EdgeFileParser(parseFile);
+               if(getFileExtension(parseFile).equals("dia")){
+
+                   ecfp = new DiaFileParser(parseFile);
+               }
+               else{
+
+                   ecfp = new EdgeFileParser(parseFile);
+               }
+               // get filetupe
+                              
                /*
                 * JUST MAKE THE ABOVE FILE CHOOSE THE RIGHT ONE!!
                 */
                tables = ecfp.getTables();
                for (int i = 0; i < tables.length; i++) {
                   tables[i].makeArrays();
+                  System.out.println(tables[i].toString());
                }
                fields = ecfp.getFields();
+               for(DatabaseField f:fields){
+            	   System.out.println(f.toString());
+               }
                ecfp = null;
                populateLists();
                saveFile = null;
